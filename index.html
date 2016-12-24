@@ -1,0 +1,162 @@
+<head>
+  <title>Copy & Paste Slack Messages</title>
+  <style>
+  textarea, div#reformatted {
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: .25rem;
+    width: 100%;
+    height: 100%;
+  }
+  div#reformatted {
+    padding-left: 25px;
+    display: inline-block;
+    overflow: scroll;
+    background-color: #eee;
+  }
+  div.left, div.right {
+    margin-right: 15px;
+    display: inline-block;
+    height: 60%;
+    width: 40%;
+  }
+
+  textarea {
+    padding: .5rem .75rem;
+    font-size: 1rem;
+    line-height: 1.25;
+    color: #55595c;
+    background-color: #fff;
+    background-image: none;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    resize: vertical;
+  }
+  p.strong {
+    font-weight: bold;
+  }
+  body {
+    max-width: 960px;
+    margin: 1em auto;
+    font-size: 12px;
+    font-family: Helvetica, sans-serif;
+  }
+  span.username {
+    display:inline-block;
+    font-weight: bold;
+    padding-top: 15px;
+    margin-left: -10px;
+  }
+  span.username:first-child {
+    padding-top: inherit;
+  }
+  span.timestamp {
+    color: #aaa;
+  }
+
+  button {
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.25;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: .5rem 1rem;
+    font-size: 1rem;
+    border-radius: .25rem;
+    background-image: none;
+    background-color: transparent;
+  }
+  button.green {
+    color: #5cb85c;
+    border-color: #5cb85c;
+
+  }
+  button.green:hover {
+    color: #fff;
+    background-color: #5cb85c;
+    border-color: #5cb85c;
+  }
+
+  button.grey {
+    color: #bbb;
+    border-color: #bbb;
+  }
+  button.grey:hover {
+    color: #fff;
+    background-color: #bbb;
+    border-color: #bbb;
+  }
+  div#options {
+    padding-top: 10px;
+  }
+
+  </style>
+</head>
+
+<h1>Copy &amp; Paste Slack Messages</h1>
+<p>Copying &amp; pasting from slack sucks. This fixes it.</p>
+
+<div class="left">
+<p class="strong">Paste From Slack Here</p>
+<textarea id="original">
+</textarea>
+</div>
+<div class="right">
+
+<p class="strong">Beautified Version Will Show Up Here</p>
+<div id="reformatted">
+</div>
+</div>
+<br>
+<br>
+<button id="reformat" class="green" onClick="reformat()">Reformat my Slack messages please!</button>
+<button id="clear" class="grey" onClick="startOver()">Clear</button>
+
+<div id="options">
+  <label>
+    <input type="checkbox" value="" id="removeTimestamps" checked="checked">
+    Please remove timestamps from the pasted content
+  </label>
+</div>
+
+<script>
+var reformat = function() {
+  var original = document.getElementById("original");
+  var formatted = document.getElementById("reformatted");
+  var removeTimestamps = document.getElementById("removeTimestamps");
+  var newtext = original.value;
+
+  if (removeTimestamps.checked) {
+    // name line + timestamp
+    newtext = newtext.replace(/\n(\S+) (\[\S+ [AP]M\])/g, "<span class='username'>$1</span>");
+    // standalone timestamp (no am/pm, not part of the users name)
+    newtext = newtext.replace(/\n\n(\[\S+\])/g, "");
+  } else {
+    newtext = newtext.replace(/\n(\S+) (\[\S+ [AP]M\])/g, "<span class='username'>$1</span> <span class='timestamp'>$2</span>");
+    newtext = newtext.replace(/\n\n(\[\S+\])/g, " <span class='timestamp'>$1</span>");
+  }
+
+  // strip extra newlines
+  newtext = newtext.replace(/\n\n/g, "");
+
+  // replace newlines with brs
+  newtext = newtext.replace(/\n/g, "<br>");
+
+  reformatted.innerHTML = newtext;
+}
+
+var startOver = function() {
+  var original = document.getElementById("original");
+  var formatted = document.getElementById("reformatted");
+  var removeTimestamps = document.getElementById("removeTimestamps");
+  original.value = "";
+  formatted.innerHTML = "";
+  removeTimestamps.checked = true;
+}
+</script>
