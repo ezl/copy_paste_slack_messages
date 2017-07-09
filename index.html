@@ -41,16 +41,15 @@
     font-family: Helvetica, sans-serif;
   }
   span.username {
-    display:inline-block;
+    display:block;
     font-weight: bold;
-    padding-top: 15px;
+    padding-top: 10px;
     margin-left: -10px;
-  }
-  span.username:first-child {
-    padding-top: inherit;
   }
   span.timestamp {
     color: #aaa;
+  }
+  .message {
   }
 
   button {
@@ -118,13 +117,6 @@
 <button id="reformat" class="green" onClick="reformat()">Reformat my Slack messages please!</button>
 <button id="clear" class="grey" onClick="startOver()">Clear</button>
 
-<div id="options">
-  <label>
-    <input type="checkbox" value="" id="removeTimestamps" checked="checked">
-    Please remove timestamps from the pasted content
-  </label>
-</div>
-
 <script>
 var reformat = function() {
   var original = document.getElementById("original");
@@ -132,21 +124,16 @@ var reformat = function() {
   var removeTimestamps = document.getElementById("removeTimestamps");
   var newtext = original.value;
 
-  if (removeTimestamps.checked) {
-    // name line + timestamp
-    newtext = newtext.replace(/\n(\S+) (\[\S+ [AP]M\])/g, "<span class='username'>$1</span>");
-    // standalone timestamp (no am/pm, not part of the users name)
-    newtext = newtext.replace(/\n\n(\[\S+\])/g, "");
-  } else {
-    newtext = newtext.replace(/\n(\S+) (\[\S+ [AP]M\])/g, "<span class='username'>$1</span> <span class='timestamp'>$2</span>");
-    newtext = newtext.replace(/\n\n(\[\S+\])/g, " <span class='timestamp'>$1</span>");
-  }
+  // name line + timestamp
+  newtext = newtext.replace(/\n(\S+)\s?\n(\[\S+ [AP]M\])/g, "<span class='username'>$1</span>");
+  // standalone timestamp (no am/pm, not part of the users name)
+  newtext = newtext.replace(/\n\n(\[\S+\])/g, "");
 
   // strip extra newlines
-  newtext = newtext.replace(/\n\n/g, "");
+  // newtext = newtext.replace(/\n\n/g, "");
 
   // replace newlines with brs
-  newtext = newtext.replace(/\n/g, "<br>");
+  // newtext = newtext.replace(/\n/g, "<br>");
 
   reformatted.innerHTML = newtext;
 }
